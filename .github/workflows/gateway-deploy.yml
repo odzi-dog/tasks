@@ -1,5 +1,7 @@
 name: Gateway (api.tasks.odzi.dog)
+
 on: push
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
