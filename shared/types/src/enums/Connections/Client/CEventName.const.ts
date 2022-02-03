@@ -1,0 +1,1 @@
+export const CLIENT_CONNECTION_UPDATE_EVENT = 'ClientConnection::update';

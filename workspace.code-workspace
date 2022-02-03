@@ -1,0 +1,26 @@
+{
+	"folders": [
+    {
+      "path": ".github"
+    },
+    {
+      "path": "platforms/web"
+    },
+    {
+      "path": "services/backend"
+    },
+    {
+      "path": "services/mailer"
+    },
+    {
+      "path": "services/gateway"
+    },
+    {
+      "path": "services/connector"
+    },
+    {
+      "path": "shared/types"
+    }
+  ],
+  "settings": {}
+}

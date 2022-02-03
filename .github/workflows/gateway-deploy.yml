@@ -1,0 +1,51 @@
+name: Gateway (api.tasks.odzi.dog)
+
+on: push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, 'service/gateway:')"
+    
+    # Variables
+    env:
+      # Versions
+      NODE_VERSION: 16
+      NPM_VERSION: 7
+
+      # Service information
+      SERVICE_PATH: services/gateway
+      SERVICE_NAME: odzi-tasks-gateway
+
+    # Build/Push steps
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use node@$NODE_VERSION
+      uses: actions/setup-node@v2
+      with:
+        node-version: $NODE_VERSION
+    - name: Use npm@$NPM_VERSION
+      run: npm install -g npm@$NPM_VERSION
+    - name: Install dependencies
+      run: npm ci
+    - name: Bootstrap and Build application
+      run: |
+        cd $SERVICE_PATH
+        npm run build
+    - name: Prepare artifact before cloud push
+      run: |
+        cp $SERVICE_PATH/package.json $SERVICE_PATH/dist
+        cp $SERVICE_PATH/package-lock.json $SERVICE_PATH/dist
+        cp $SERVICE_PATH/captain-definition $SERVICE_PATH/dist
+    - name: Install CapRover
+      run: npm install -g caprover
+    - name: Zip aftifact into .tar file
+      uses: thedoctor0/zip-release@master
+      with:
+        type: 'tar'
+        filename: '../output.tar'
+        directory: '$SERVICE_PATH/dist/'
+    - name: Push artifact to private cloud instance
+      run: |
+        cd $SERVICE_PATH
+        caprover deploy -h https://captain.app.odzi.dog -p ${{ secrets.CAPROVER_PASSWORD }} --tarFile=output.tar -a $SERVICE_NAME
