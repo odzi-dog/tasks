@@ -1,0 +1,50 @@
+name: Backend
+
+on: push
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, 'service/backend:')"
+    
+    # Variables
+    env:
+      # Versions
+      NODE_VERSION: 16
+      NPM_VERSION: 7
+
+      # Service information
+      SERVICE_PATH: services/backend
+      SERVICE_NAME: odzi-tasks-backend
+
+    # Build/Push steps
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use node@${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: Use npm@${{ env.NPM_VERSION }}
+      run: npm install -g npm@${{ env.NPM_VERSION }}
+    - name: Bootstrap and Build application
+      run: |
+        cd ${{ env.SERVICE_PATH }}
+        npm ci
+        npm run build
+    - name: Prepare artifact before cloud push
+      run: |
+        cp ${{ env.SERVICE_PATH }}/package.json ${{ env.SERVICE_PATH }}/dist
+        cp ${{ env.SERVICE_PATH }}/package-lock.json ${{ env.SERVICE_PATH }}/dist
+        cp ${{ env.SERVICE_PATH }}/captain-definition ${{ env.SERVICE_PATH }}/dist
+    - name: Install CapRover
+      run: npm install -g caprover
+    - name: Zip aftifact into .tar file
+      uses: thedoctor0/zip-release@master
+      with:
+        type: 'tar'
+        filename: '../output.tar'
+        directory: '${{ env.SERVICE_PATH }}/dist/'
+    - name: Push artifact to private cloud instance
+      run: |
+        cd ${{ env.SERVICE_PATH }}
+        caprover deploy -h https://captain.app.odzi.dog -p ${{ secrets.CAPROVER_PASSWORD }} --tarFile=output.tar -a ${{ env.SERVICE_NAME }}
