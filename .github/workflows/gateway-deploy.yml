@@ -27,6 +27,7 @@ jobs:
     - name: Bootstrap and Build application
       run: |
         cd ${{ env.SERVICE_PATH }}
+        npm ci
         npm run build
     - name: Prepare artifact before cloud push
       run: |
