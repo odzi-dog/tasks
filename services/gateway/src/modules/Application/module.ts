@@ -20,10 +20,10 @@ import * as Modules from '../index';
       autoSchemaFile: true,
       context: ({ req }) => ({ req }),
       cors: {
-        origin: 'http://localhost:3000',
-          // process.env.NODE_ENV === 'production'
-            // ? 'https://tasks.odzi.dog'
-            // : 'http://localhost:3000',
+        origin:
+          process.env.NODE_ENV === 'production'
+            ? 'https://tasks.odzi.dog'
+            : 'http://localhost:3000',
         credentials: true,
       },
     }),
