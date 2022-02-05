@@ -15,6 +15,7 @@
 	let task: Partial<IMappedTask> = {};
 	let loaded = false;
 	let isSubtasksHidden = false;
+  let playButtonLoading = false;
 
 	// function toggleSubtasks
 	// - This function'll change value of
@@ -75,17 +76,27 @@
 				</button>
 
 				<!-- Record time  -->
-				<button on:click={() => {
+				<button on:click={async () => {
+          // Updating button state
+          playButtonLoading = true;
+
+          // Making requests
           if (task.sessions?.running?.length > 0) {
-            task.instance.endSession();
+            await task.instance.endSession();
           } else {
-            task.instance.startSession();
+            await task.instance.startSession();
           };
+
+          playButtonLoading = false;
         }} class="p-2 rounded-xl text-white opacity-60 hover:bg-zinc-800 hover:opacity-100">
-					{ #if task.sessions?.running?.length > 0 }
-            <Icon src={Pause} class="w-4 h-4" />
+					{ #if playButtonLoading }
+            <Circle color="#fff" size={15} />
           { :else }
-            <Icon src={Play} class="w-4 h-4" />
+            { #if task.sessions?.running?.length > 0 }
+              <Icon src={Pause} class="w-4 h-4" />
+            { :else }
+              <Icon src={Play} class="w-4 h-4" />
+            { /if }
           { /if }
 				</button>
 			</div>
@@ -94,11 +105,6 @@
 		<!-- Badges -->
 		{#if !isSubtask}
 			<div class="flex items-center flex-wrap py-2">
-				<!-- User badges -->
-				<!-- <div class="mx-0.5 rounded-full px-2 py-0.5 bg-purple-500 bg-opacity-50">
-					<p class="text-xs text-white opacity-60">Важное</p>
-				</div> -->
-
         <!-- Ended sessions -->
         { #if task?.sessions?.ended?.length > 0 }
           <div class="mx-0.5 rounded-full px-2 py-0.5 bg-zinc-700 bg-opacity-50 relative">

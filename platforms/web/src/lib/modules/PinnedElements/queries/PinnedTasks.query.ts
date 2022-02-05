@@ -1,5 +1,5 @@
 // Importing modules
-import { gql } from '@apollo/client/core';
+import gql from 'graphql-tag';
 import type { ITaskObject } from '$shared/types';
 
 // Exporting result interface

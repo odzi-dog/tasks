@@ -1,13 +1,13 @@
 // Importing modules
 import { writable } from 'svelte/store';
-import { client } from '$lib/modules/Gateway/module';
+import { client } from '$lib/modules/GraphQLClient/module';
 import type { IUserObject } from '$shared/types';
+import { ErrorHandler } from '$lib/modules/Errors/stores';
+import { ErrorType } from '$lib/types';
 
 // Queries
 import { MeQuery } from '../queries';
 import type { MeQueryResult } from '../queries';
-import { ErrorHandler } from '$lib/modules/Errors/stores';
-import { ErrorType } from '$lib/types';
 
 // Exporting store interface
 export interface ICurrentUserStore {
@@ -31,47 +31,40 @@ function _initialize() {
 		// - Checking user on graphql api
 		// Returns {loggedIn} boolean
 		async initialize() {
-			return new Promise((resolve) => {
-				// Getting query results
-				const query = client.query<MeQueryResult>(MeQuery);
+      return new Promise((resolve) => {
+        // Making request
+        client.request(MeQuery)
+        .then((data: MeQueryResult) => {
+          // Updating store
+          update((object) => {
+            object.loggedIn = true;
+            object.user = data?.Me;
 
-				// Refetching query to clear cache
-				query.refetch();
+            return object;
+          });
 
-				const unsubscribe = query.subscribe((response) => {
-					if (response.loading) return;
+          // Resolving
+          resolve(true);
+        })
+        .catch(() => {
+          // Firing error
+          ErrorHandler.throw({
+            type: ErrorType.UNAUTHORIZED,
+            message: 'You need to authorize to view this page',
 
-					// Checking if we have any errors
-					if (response.error || response.data?.Me == null) {
-						// Firing error
-						ErrorHandler.throw({
-							type: ErrorType.UNAUTHORIZED,
-							message: 'You need to authorize to view this page',
+            doFireToast: true,
+            isAuthorizationRequired: true
+          });
 
-							doFireToast: true,
-							isAuthorizationRequired: true
-						});
+          // Triggering store update
+          update((object) => {
+            return { loggedIn: false };
+          });
 
-						// Triggering store update
-						update((object) => {
-							return { loggedIn: false };
-						});
-					} else {
-						// Updating store
-						update((object) => {
-							object.loggedIn = true;
-							object.user = response.data?.Me;
-
-							return object;
-						});
-					}
-
-					unsubscribe();
-
-					// Resolving
-					resolve(response.error || response.data?.Me == null ? false : true);
-				});
-			});
+          // Resolving
+          resolve(false);
+        });
+      });
 		}
 
 		// @method authenticate

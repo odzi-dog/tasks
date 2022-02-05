@@ -1,5 +1,5 @@
 // Importing modules
-import { gql } from '@apollo/client/core';
+import gql from 'graphql-tag';
 import type { ITaskSessionObject, ICollectionObject, ITaskObject } from '$shared/types';
 import { TaskPart } from '$lib/modules/Tasks/queries';
 

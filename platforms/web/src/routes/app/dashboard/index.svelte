@@ -4,15 +4,20 @@
 		Icon,
 		Beaker,
 		ColorSwatch,
-		ChevronDown
+		ChevronDown,
+    Plus,
 	} from 'svelte-hero-icons';
 	import { MappedTasks, UpdatesConnection, UserCollections } from '$lib/stores';
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import { Circle } from 'svelte-loading-spinners';
-	import { CollectionTile, TaskTile } from '$components/Tiles';
-  
+	import { CollectionTile } from '$components/Tiles';
+
+  // Popup opener
+  const { open } = getContext('simple-modal');
+
   import { EClientUpdateType, IUpdatePayload } from '$shared/types';
   import type { ITaskObject } from '$shared/types';
+import { CreateCollectionPopup } from '$components/Popups';
 
 	let loaded = false;
 
@@ -115,5 +120,27 @@
 		{#each $UserCollections.list as collection}
 			<CollectionTile {collection} />
 		{/each}
+
+    <!-- Create new Collection tile -->
+    <div class="w-1/3 p-2">
+      <div class="w-full bg-zinc-800 rounded-xl flex flex-col items-center justify-center py-6">
+        <!-- Emoji -->
+
+        <!-- Text -->
+        <div class="my-6 text-center w-2/3">
+          <h1 class="text-base text-white">Создать коллекцию</h1>
+          <p class="text-white text-xs opacity-60">Вы можете с лёгкостью создать новую коллекцию для того, что бы как-либо структурировать все ваши задания! Просто нажмите на кнопку ниже.</p>
+        </div>
+
+        <!-- Button -->
+        <button on:click={() => {
+          open(CreateCollectionPopup);
+        }} class="rounded-full bg-zinc-700 text-white flex px-6 py-2 items-center justify-center">
+          <Icon src={Plus} class="w-4 h-4" />
+
+          <p class="text-base ml-2">Создать коллекцию</p>
+        </button>
+      </div>
+    </div>
 	{/if}
 </section>

@@ -1,10 +1,9 @@
 // Importing modules
-import { client } from '$lib/modules/Gateway/module';
+import { client } from '$lib/modules/GraphQLClient/module';
 import type { IMappedTask } from '$lib/types';
 
 // Queries && Mutations
 import { EndSessionMutation, StartSessionMutation } from '../queries';
-import type { IStartSessionMutationResponse } from '../queries';
 
 // Task instance class
 export class TaskInstance {
@@ -15,25 +14,22 @@ export class TaskInstance {
   // startSession
   async startSession() {
     // Mutating
-    const response = await client.mutate(StartSessionMutation, {
-      variables: {
-        taskId: String(this.task._id),
-      },
+    return await client.request(StartSessionMutation, {
+      taskId: String(this.task._id),
     });
-
-    console.log('mutation response:');
-    console.log(response);
   };
 
   // endSession
-  async endSession() {
-    // Mutating
-    this.task.sessions.running.forEach((session) => {
-      client.mutate(EndSessionMutation, {
-        variables: {
+  endSession() {
+    return new Promise(async (resolve) => {
+      // Mutating
+      for (const session of this.task.sessions.running) {
+        await client.request(EndSessionMutation, {
           sessionId: String(session._id)
-        },
-      });
+        });
+      };
+
+      resolve(null);
     });
   };
 

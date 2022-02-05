@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { Circle } from 'svelte-loading-spinners';
 	import { goto } from '$app/navigation';
-  
+
 	import { CurrentUser, UserLayoutSettings, UpdatesConnection } from '$lib/stores';
 
 	// Importing components
@@ -24,7 +24,7 @@
 
         // Initializing socket connection
         UpdatesConnection.initialize();
-			} else {
+      } else {
 				goto('/');
 			}
 		});

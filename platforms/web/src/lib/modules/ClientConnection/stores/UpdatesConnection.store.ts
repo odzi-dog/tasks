@@ -31,7 +31,7 @@ function _initialize() {
       if (store.instance == null || !store.connected) {
         // Creating new socket io instance
         // +todo production url
-        const socket = io('https://api.tasks.odzi.dog');
+        const socket = io('http://localhost:3001');
 
         // on connect listener
         socket.on('connect', async () => {

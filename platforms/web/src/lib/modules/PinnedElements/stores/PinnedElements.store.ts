@@ -1,7 +1,7 @@
 // Importing modules
 import { writable } from 'svelte/store';
 import type { ICollectionObject, ITaskObject } from '$shared/types';
-import { client } from '$lib/modules/Gateway/services';
+import { client } from '$lib/modules/GraphQLClient/module';
 import { ErrorHandler } from '$lib/modules/Errors/stores';
 import { ErrorType } from '$lib/types';
 
@@ -31,33 +31,26 @@ function _initialize() {
 	async function _fetchTasks() {
 		return new Promise((resolve) => {
 			// Generating query
-			const query = client.query<IPinnedTasksResult>(PinnedTasksQuery);
-
-			query.refetch();
-
-			const unsubscribe = query.subscribe((response) => {
-				if (response.loading) return;
-
-				// Checking if we have any errors
-				if (response.error) {
-					ErrorHandler.throw({
-						type: ErrorType.SERVER_ERROR,
-						message: 'Could not fetch PinnedTasks'
-					});
-
-					resolve(null);
-				} else {
+      client.request<IPinnedTasksResult>(PinnedTasksQuery)
+      .then((data) => {
 					// Updating
 					update((object) => {
-						object.tasks = response.data?.PinnedTasks;
+						object.tasks = data?.PinnedTasks;
 
 						return object;
 					});
 
-					unsubscribe();
 					resolve(null);
-				}
-			});
+      })
+      .catch(() => {
+        ErrorHandler.throw({
+          type: ErrorType.SERVER_ERROR,
+          message: 'Could not fetch PinnedTasks'
+        });
+
+        // Resolving
+        resolve(null);
+      });
 		});
 	}
 
@@ -65,33 +58,26 @@ function _initialize() {
 	async function _fetchCollections() {
 		return new Promise((resolve) => {
 			// Generating query
-			const query = client.query<IPinnedCollectionsResult>(PinnedCollectionsQuery);
+      client.request<IPinnedCollectionsResult>(PinnedCollectionsQuery)
+      .then((data) => {
+        // Updating
+        update((object) => {
+          object.collections = data?.PinnedCollections;
 
-			query.refetch();
+          return object;
+        });
 
-			const unsubscribe = query.subscribe((response) => {
-				if (response.loading) return;
+        resolve(null);
+      })
+      .catch(() => {
+        ErrorHandler.throw({
+          type: ErrorType.SERVER_ERROR,
+          message: 'Could not fetch PinnedCollections'
+        });
 
-				// Checking if we have any errors
-				if (response.error) {
-					ErrorHandler.throw({
-						type: ErrorType.SERVER_ERROR,
-						message: 'Could not fetch PinnedCollections'
-					});
-
-					resolve(null);
-				} else {
-					// Updating
-					update((object) => {
-						object.collections = response.data?.PinnedCollections;
-
-						return object;
-					});
-
-					unsubscribe();
-					resolve(null);
-				}
-			});
+        // Resolving
+        resolve(null);
+      });
 		});
 	}
 

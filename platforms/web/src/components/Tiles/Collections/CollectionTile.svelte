@@ -3,10 +3,13 @@
 	import type { ICollectionStoreEntity } from '$lib/stores';
 	import { MappedTasks } from '$lib/stores';
 	import { TaskTile } from '$components/Tiles';
+  import { CreateTaskPopup } from '$components/Popups';
 	import { Icon, ChevronUp, ChevronDown, Plus } from 'svelte-hero-icons';
+  import { getContext } from 'svelte';
 
 	// Variables
 	let isTasksHidden = false;
+  const { open } = getContext('simple-modal');
 
 	// function toggleTasks
 	// - Switches {isTasksHidden} to !isTasksHidden
@@ -54,7 +57,10 @@
 				{:else}
 					<!-- Create new task button -->
 					<div
-						class="w-full py-6 px-4 text-center flex flex-col items-center justify-center opacity-60"
+            on:click={() => {
+              open(CreateTaskPopup, { collectionId: String(collection._id) });
+            }}
+						class="cursor-pointer w-full py-6 px-4 text-center flex flex-col items-center justify-center opacity-60"
 					>
 						<Icon src={Plus} class="w-5 h-5 text-white" />
 

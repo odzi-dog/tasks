@@ -1,7 +1,8 @@
 export enum ErrorType {
 	// User-related errors
-	UNAUTHORIZED = '401',
+	UNAUTHORIZED = 'unauthorized',
 
 	// Other errors
-	SERVER_ERROR = '500'
+	SERVER_ERROR = 'server',
+  USER_ERROR = 'user'
 }
