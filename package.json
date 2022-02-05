@@ -1,0 +1,20 @@
+{
+  "name": "tasks.odzi.dog",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build:web": "cd platforms/web && npm ci && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/odzi-dog/tasks.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/odzi-dog/tasks/issues"
+  },
+  "homepage": "https://github.com/odzi-dog/tasks#readme"
+}
