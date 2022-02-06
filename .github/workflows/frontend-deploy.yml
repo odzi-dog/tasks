@@ -14,7 +14,7 @@ jobs:
       NPM_VERSION: 7
 
       # Service information
-      SERVICE_PATH: platform/web
+      SERVICE_PATH: platforms/web
       SERVICE_NAME: odzi-tasks-web
 
     # Build/Push steps
@@ -48,4 +48,3 @@ jobs:
       run: |
         cd ${{ env.SERVICE_PATH }}
         caprover deploy -h https://captain.app.odzi.dog -p ${{ secrets.CAPROVER_PASSWORD }} --tarFile=output.tar -a ${{ env.SERVICE_NAME }}
-        
