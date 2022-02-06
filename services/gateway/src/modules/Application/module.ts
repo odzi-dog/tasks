@@ -26,6 +26,7 @@ import * as Modules from '../index';
             : 'http://localhost:3000',
         credentials: true,
       },
+      playground: true,
     }),
   ],
 })
