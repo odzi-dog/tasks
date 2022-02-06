@@ -48,3 +48,4 @@ jobs:
       run: |
         cd ${{ env.SERVICE_PATH }}
         caprover deploy -h https://captain.app.odzi.dog -p ${{ secrets.CAPROVER_PASSWORD }} --tarFile=output.tar -a ${{ env.SERVICE_NAME }}
+        
