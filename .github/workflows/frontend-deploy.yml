@@ -43,7 +43,7 @@ jobs:
       with:
         type: 'tar'
         filename: '../output.tar'
-        directory: '${{ env.SERVICE_PATH }}/dist/'
+        directory: '${{ env.SERVICE_PATH }}/build/'
     - name: Push artifact to private cloud instance
       run: |
         cd ${{ env.SERVICE_PATH }}
